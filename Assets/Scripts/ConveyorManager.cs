@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class ConveyorManager : MonoBehaviour
 {
@@ -46,6 +47,10 @@ public class ConveyorManager : MonoBehaviour
         }
         else
         {
+            foreach(var block in movingObjects)
+            {
+                block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1);
+            }
             elapsed = 0;
             movingObjects.Clear();
         }
@@ -158,8 +163,10 @@ public class ConveyorManager : MonoBehaviour
         foreach(var conveyor in conveyors)
         {
             //Debug.Log(conveyor.Value.Count);
-            foreach(var gridId in conveyor.Value)
+            //foreach(var gridId in conveyor.Value)
+            for (int i = conveyor.Value.Count - 1; i > -1; i--)
             {
+                Vector2 gridId = conveyor.Value[i];
                 // Debug.Log(gridId);
                 GameObject currentObject;
                 if (nodeManager.CheckObject(gridId, out currentObject))
@@ -178,9 +185,10 @@ public class ConveyorManager : MonoBehaviour
                             Debug.Log(dir);
                             
                             movingObjects.Add(new MovingObjects(dir, currentObject));
+                            nodeManager.UpdateNodePostion(gridId, dir);
+
                         }
                     }
-                 
                 }
             }
         }

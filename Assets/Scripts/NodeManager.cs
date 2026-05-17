@@ -87,4 +87,10 @@ public class NodeManager : MonoBehaviour
     {
         nodes[(int)gridId.x, (int)gridId.y].currentObject = testObject;
     }
+
+    public void UpdateNodePostion(Vector2 gridId, Vector2 dir)
+    {
+        nodes[(int)(gridId.x + dir.x), (int)(gridId.y + dir.y)].currentObject = nodes[(int)gridId.x, (int)gridId.y].currentObject;
+        nodes[(int)gridId.x, (int)gridId.y].currentObject = null;
+    }
 }
