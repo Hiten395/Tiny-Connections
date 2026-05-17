@@ -7,6 +7,7 @@ public class MouseManager : MonoBehaviour
 {
     
     [SerializeField] NodeLimitsData nodelimits;
+    [SerializeField] GameObject testobject;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
     Camera camera;
@@ -22,6 +23,19 @@ public class MouseManager : MonoBehaviour
         camera = Camera.main;
 
     }
+
+    public void Test(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        Vector2 gridId = GetGridId();
+
+        if (!nodeManager.CheckStatus(gridId))
+        {
+            GameObject test = Instantiate(testobject, new Vector3(gridId.x + 0.5f - nodelimits.width / 4, gridId.y + 0.5f - nodelimits.height / 4, -1), Quaternion.identity, transform);
+            nodeManager.Additem(gridId, test);
+        }
+        
+    }
     public void LeftClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -30,6 +44,10 @@ public class MouseManager : MonoBehaviour
         if(nodeManager.CheckStatus(gridId))
         {
             SpawnConveyor(gridId);
+        }
+        else
+        {
+            conveyorManager.Details(gridId);
         }
     }
 
