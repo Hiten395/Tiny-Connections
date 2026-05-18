@@ -36,6 +36,13 @@ public class MouseManager : MonoBehaviour
         }
         
     }
+
+    public void Direction(InputAction.CallbackContext context)
+    {
+        if(!context.performed) return;
+        Vector2 dir = context.ReadValue<Vector2>();
+        conveyorManager.SetOutGoingDirection(dir);
+    }
     public void LeftClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;

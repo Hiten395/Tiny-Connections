@@ -634,6 +634,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e782b40f-3128-4035-9734-b9a82b45c487
     m_ActionName: 'Play/Test[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 339055323}
+        m_TargetAssemblyTypeName: MouseManager, Assembly-CSharp
+        m_MethodName: Direction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9a33468a-1bbe-4fdc-9d03-7034bdfdb234
+    m_ActionName: 'Play/Directions[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Play

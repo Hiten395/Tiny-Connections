@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using System;
+using UnityEditor.Experimental.GraphView;
 
 public class ConveyorManager : MonoBehaviour
 {
@@ -115,6 +116,32 @@ public class ConveyorManager : MonoBehaviour
             default:
                 Debug.Log("invalid direction return up");
                 return new Vector2(0,1);
+        }
+    }
+
+    public void SetOutGoingDirection(Vector2 dir)
+    {
+        if (dir.x == 0)
+        {
+            if (dir.y == 1)
+            {
+                spawnDirection = 90;
+            }
+            else if (dir.y == -1)
+            {
+                spawnDirection = 270;
+            }
+        }
+        else if (dir.y == 0)
+        {
+            if (dir.x == 1)
+            {
+                spawnDirection = 0;
+            }
+            else if (dir.x == -1)
+            {
+                spawnDirection = 180;
+            }
         }
     }
 
