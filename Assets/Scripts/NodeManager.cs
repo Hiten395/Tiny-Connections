@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,8 +12,10 @@ public class NodeManager : MonoBehaviour
     class Node
     {
         public bool isInUse = false;
+        public bool isMachine = false;
         public Vector2 owner = new Vector2(-1,-1);
         public GameObject currentObject = null;
+        public GameObject nodeObject = null;
         public List<Vector2> incoming = new List<Vector2>();
         public List<Vector2> outgoing = new List<Vector2>();
     }
@@ -32,17 +35,16 @@ public class NodeManager : MonoBehaviour
         //Debug.Log("Nodes: " + nodes[0, 0].owner);
     }
 
-    public bool CheckStatus(Vector2 id)
+    public bool[] CheckStatus(Vector2 id)
     {
+        // returns false, false if node can be occupied
+        // true, false if conveyor
+        // false, true if machine
         Node node = nodes[(int)id.x, (int)id.y];
-        if (node.isInUse == false)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        bool[] res = new bool[2];
+        res[0] = node.isInUse;
+        res[1] = node.isMachine;
+        return res;
     }
 
     public void CheckConnections(Vector2 id, out List<Vector2>[] status)
@@ -71,16 +73,34 @@ public class NodeManager : MonoBehaviour
         }
     }
 
-    public void UpdateNode(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner)
+    public void UpdateNode(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner, GameObject nodeObject)
     {
         Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
+        workingNode.nodeObject = nodeObject;
         workingNode.isInUse = true;
         workingNode.outgoing.Add(outgoingDirection + selectedNode);
         workingNode.owner = owner;
         workingNode = nodes[(int)selectedNode.x + (int)outgoingDirection.x, (int)selectedNode.y + (int)outgoingDirection.y];
         workingNode.incoming.Add(selectedNode);
         workingNode.owner = owner;
-        
+    }
+
+    public void UpdateOwner(Vector2 gridId, Vector2 owner)
+    {
+        nodes[(int)gridId.x, (int)gridId.y].owner = owner;
+    }
+
+    public void ResetNode(Vector2 selectedNode)
+    {
+        Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
+        if (!workingNode.isMachine)
+        {
+            workingNode.isInUse = false;
+            Destroy(workingNode.nodeObject);
+            Node nextNode = nodes[(int)workingNode.outgoing[0].x, (int)workingNode.outgoing[0].y];
+            workingNode.outgoing.Clear();
+            nextNode.incoming.Remove(selectedNode);
+        }
     }
 
     public void Additem(Vector2 gridId, GameObject testObject)
