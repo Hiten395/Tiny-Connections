@@ -35,6 +35,7 @@ public class NodeManager : MonoBehaviour
         //Debug.Log("Nodes: " + nodes[0, 0].owner);
     }
 
+    // returns false, false if node can be occupied, true, false if conveyor, false, true if machine
     public bool[] CheckStatus(Vector2 id)
     {
         // returns false, false if node can be occupied
@@ -47,6 +48,19 @@ public class NodeManager : MonoBehaviour
         return res;
     }
 
+    public bool CheckEmpty(Vector2 id)
+    {
+        Node node = nodes[(int)id.x, (int)id.y];
+        if (node.isInUse == false && node.isMachine == false)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    // returns the incoming and outgoing directions of selected nodes as absolute values
     public void CheckConnections(Vector2 id, out List<Vector2>[] status)
     {
         status = new List<Vector2>[2];
@@ -54,11 +68,13 @@ public class NodeManager : MonoBehaviour
         status[1] = nodes[(int)id.x, (int)id.y].outgoing;
     }
 
+    // returns the owner (origin of the conveyor)
     public Vector2 CheckOwner(Vector2 id)
     {
         return nodes[(int)id.x, (int)id.y].owner;
     }
     
+    // returns does the node contain an active transport object along with a refrence
     public bool CheckObject(Vector2 gridId, out GameObject currentObject)
     {
         if (nodes[(int)gridId.x, (int)gridId.y].currentObject == null)
@@ -73,6 +89,7 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    // updates the nodes with the given information
     public void UpdateNode(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner, GameObject nodeObject)
     {
         Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
@@ -85,11 +102,20 @@ public class NodeManager : MonoBehaviour
         workingNode.owner = owner;
     }
 
+    // sets the outgoing direction for a given node
+    public void SetOutGoingDirection(Vector2 selectedNode, Vector2 relativeDirection)
+    {
+        Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
+        workingNode.outgoing.Add(selectedNode + relativeDirection);
+    }
+
+    // updates the owner of a selected node
     public void UpdateOwner(Vector2 gridId, Vector2 owner)
     {
         nodes[(int)gridId.x, (int)gridId.y].owner = owner;
     }
 
+    // resets the node, will not work if the node is occupied by a machine
     public void ResetNode(Vector2 selectedNode)
     {
         Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
@@ -103,14 +129,19 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    // adds an transport item to that passed node
     public void Additem(Vector2 gridId, GameObject testObject)
     {
         nodes[(int)gridId.x, (int)gridId.y].currentObject = testObject;
     }
-
+    
+    // moves the transport object to a new node of given direction
     public void UpdateNodePostion(Vector2 gridId, Vector2 dir)
     {
         nodes[(int)(gridId.x + dir.x), (int)(gridId.y + dir.y)].currentObject = nodes[(int)gridId.x, (int)gridId.y].currentObject;
         nodes[(int)gridId.x, (int)gridId.y].currentObject = null;
+        // GameObject temp;
+        // Debug.Log(CheckObject(gridId, out temp));
+        // Debug.Log(CheckObject(gridId + dir, out temp));
     }
 }

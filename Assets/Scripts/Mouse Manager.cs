@@ -12,6 +12,7 @@ public class MouseManager : MonoBehaviour
     [SerializeField] bool spawnTestobject;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
+    ResourceSpawnerManager resourceSpawnerManager;
     Camera camera;
     int xoffset;
     int yoffset;
@@ -20,6 +21,7 @@ public class MouseManager : MonoBehaviour
     {
         nodeManager = FindAnyObjectByType<NodeManager>();
         conveyorManager = FindAnyObjectByType<ConveyorManager>();
+        resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
         xoffset = nodelimits.width / 4;
         yoffset = nodelimits.height / 4;
         camera = Camera.main;
@@ -38,7 +40,7 @@ public class MouseManager : MonoBehaviour
         }
         else if(!spawnTestobject)
         {
-            
+            resourceSpawnerManager.NewSpawner(gridId, testobject);
         }
         
     }
@@ -48,6 +50,7 @@ public class MouseManager : MonoBehaviour
         if(!context.performed) return;
         Vector2 dir = context.ReadValue<Vector2>();
         conveyorManager.SetOutGoingDirection(dir);
+        resourceSpawnerManager.SpawnDirection(dir);
     }
     public void LeftClick(InputAction.CallbackContext context)
     {
@@ -80,7 +83,6 @@ public class MouseManager : MonoBehaviour
         Vector2 nodeID = new Vector2((int)Math.Floor(worldPos.x) + xoffset, (int)Math.Floor(worldPos.y) + yoffset);
         return nodeID;
     }
-
     void SpawnConveyor(Vector2 gridId)
     {
         conveyorManager.NewConveyor(gridId);

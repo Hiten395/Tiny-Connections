@@ -1,22 +1,166 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
+using System;
+using Mono.Cecil;
+using Unity.VisualScripting;
 
 public class ResourceSpawnerManager : MonoBehaviour
 {
     [SerializeField] GameObject spawner;
+    [SerializeField] NodeLimitsData nodeLimitsData;
+    [SerializeField] int ticksBetweenSpawns;
+    int ticks;
+    List<Spanwer> spanwers = new List<Spanwer>();
+    List<MovingObject> movingObjects = new List<MovingObject>();
+    NodeManager nodeManager;
+    float elapsed = 0;
+
+    int spawnDirection = 0;
+
+    class MovingObject
+    {
+        public GameObject thing;
+        public Vector2 dir;
+        public MovingObject(Vector2 dir2, GameObject thing)
+        {
+            dir = new Vector3(dir2.x, dir2.y, -2);
+            this.thing = thing;
+        }
+    }
+
     class Spanwer
     {
-        public Vector2 outgoingDirection;
-        public List<Vector2> occupyingNodes = new List<Vector2>();
+        public Vector2 outGoingDirection;
+        public Vector2 nodeId = new Vector2(-1, -1);
+        public GameObject resource;
+        public GameObject currentResource;
+        public GameObject self;
+
+        public Spanwer(Vector2 nodeId, Vector2 outGoingDirection, GameObject resource, GameObject self)
+        {
+            this.outGoingDirection = outGoingDirection;
+            this.nodeId = nodeId;
+            this.resource = resource;
+            this.self = self;
+        }
     }
+
+    void Update()
+    {
+        elapsed += Time.deltaTime;
+
+        if (elapsed <= 1)
+        {
+            foreach (var movingObject in movingObjects)
+            {
+                movingObject.thing.transform.Translate((new Vector3(movingObject.dir.x, movingObject.dir.y, 0))* Time.deltaTime);
+            }
+        }
+        else
+        {
+            foreach(var block in movingObjects)
+            {
+                block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1.5f);
+            }
+            elapsed = 0;
+            movingObjects.Clear();
+        }
+    }
+
 
     void Start()
     {
-        List<Spanwer> spanwers = new List<Spanwer>();
+        ticks = ticksBetweenSpawns - 1;
+        nodeManager = FindAnyObjectByType<NodeManager>();
     }
 
-    public void NewSpawner(Vector2 gridId)
+    public void NewResource()
     {
+        if (!(ticks == ticksBetweenSpawns))
+        {
+            ticks++;
+            return;
+        }
+
+        ticks = 0;
         
+        foreach (var spawner in spanwers)
+        {
+
+            GameObject item;
+            if (!nodeManager.CheckObject(spawner.nodeId, out item))
+            {
+                GameObject newItem = Instantiate(spawner.resource, new Vector3(spawner.nodeId.x + 0.5f - nodeLimitsData.width / 4, spawner.nodeId.y + 0.5f - nodeLimitsData.height / 4, -2f), Quaternion.identity, transform);
+                spawner.currentResource = newItem;
+                nodeManager.Additem(spawner.nodeId, newItem); 
+                Debug.Log("item added to nodeId: " + spawner.nodeId);               
+            }
+            else if(!nodeManager.CheckObject(spawner.outGoingDirection, out item))
+            {
+                movingObjects.Add(new MovingObject(spawner.outGoingDirection - spawner.nodeId, spawner.currentResource));
+                Vector2 dir = spawner.outGoingDirection - spawner.nodeId;
+                nodeManager.UpdateNodePostion(spawner.nodeId, dir);
+                //spawner.currentResource = null;
+            }
+        }
     }
+
+    public void NewSpawner(Vector2 gridId, GameObject resource)
+    {
+        if (!nodeManager.CheckEmpty(gridId))
+        {
+            return;
+        }
+
+        GameObject self = Instantiate(spawner, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1.5f), Quaternion.Euler(0, 0, spawnDirection), transform);
+        spanwers.Add(new Spanwer(gridId, gridId + OutGoingDirection(spawnDirection), resource, self));
+        nodeManager.SetOutGoingDirection(gridId, gridId + OutGoingDirection(spawnDirection));
+    }
+
+    public void SpawnDirection(Vector2 dir)
+    {
+        if (dir.x == 0)
+        {
+            if (dir.y == 1)
+            {
+                spawnDirection = 90;
+            }
+            else if (dir.y == -1)
+            {
+                spawnDirection = 270;
+            }
+        }
+        else if (dir.y == 0)
+        {
+            if (dir.x == 1)
+            {
+                spawnDirection = 0;
+            }
+            else if (dir.x == -1)
+            {
+                spawnDirection = 180;
+            }
+        }
+    }
+
+     Vector2 OutGoingDirection(int dir)
+    {
+        switch(dir)
+        {
+            case 0:
+                return new Vector2(1,0);
+            case 90: 
+                return new Vector2(0,1);
+            case 180:
+                return new Vector2(-1,0);
+            case 270:
+                return new Vector2(0,-1);
+            default:
+                Debug.Log("invalid direction return up");
+                return new Vector2(0,1);
+        }
+    }
+    
+    
 }

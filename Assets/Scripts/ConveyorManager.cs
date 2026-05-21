@@ -3,9 +3,6 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using System;
-using UnityEditor.Experimental.GraphView;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 
 public class ConveyorManager : MonoBehaviour
 {
@@ -13,6 +10,7 @@ public class ConveyorManager : MonoBehaviour
     [SerializeField] NodeLimitsData nodeLimitsData;
     [SerializeField] int spawnDirection;
     NodeManager nodeManager;
+    ResourceSpawnerManager resourceSpawnerManager;
     
     float elapsed = 0f;
     Dictionary<Vector2, List<Vector2>> conveyors = new Dictionary<Vector2, List<Vector2>>();
@@ -34,6 +32,7 @@ public class ConveyorManager : MonoBehaviour
     void Start()
     {
         nodeManager = FindAnyObjectByType<NodeManager>();
+        resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
         StartCoroutine(MoveCoroutine());
     }
 
@@ -59,12 +58,13 @@ public class ConveyorManager : MonoBehaviour
         }
     }
 
+    // Deletes the given gridId conveyor
     public void DeleteConveyor(Vector2 gridId)
     {
         List<Vector2>[] status;
         nodeManager.CheckConnections(gridId, out status);
         Vector2 next = status[1][0];
-        if (next != null)
+        if (!nodeManager.CheckEmpty(next))
         {
             SetOwner(gridId);
         }
@@ -126,7 +126,8 @@ public class ConveyorManager : MonoBehaviour
         Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
         nodeManager.UpdateNode(gridId, outgoingDirection, owner, temp);
     }
-
+    
+    // pass a gridID which on the conveyor, all conveyor after passed gridId have their owner set as the next gridId
     void SetOwner(Vector2 gridId)
     {
         Vector2 owner = nodeManager.CheckOwner(gridId);
@@ -247,7 +248,7 @@ public class ConveyorManager : MonoBehaviour
         }
     }
 
-    // Checks which objects to Move
+    // Checks which objects to Move and adds them to a list also applies to spwners
     void MoveObjects()
     {
         foreach(var conveyor in conveyors)
@@ -268,12 +269,9 @@ public class ConveyorManager : MonoBehaviour
                     {
                         //Debug.Log(connections[1][0]);
                         GameObject other;
-                        if (nodeManager.CheckObject(connections[1][0], out other) == false)
+                        if (!nodeManager.CheckObject(connections[1][0], out other))
                         {
-                            Debug.Log("test");
                             Vector2 dir = connections[1][0] - gridId;
-                            Debug.Log(dir);
-                            
                             movingObjects.Add(new MovingObjects(dir, currentObject));
                             nodeManager.UpdateNodePostion(gridId, dir);
 
@@ -282,5 +280,6 @@ public class ConveyorManager : MonoBehaviour
                 }
             }
         }
+        resourceSpawnerManager.NewResource();
     }
 }
