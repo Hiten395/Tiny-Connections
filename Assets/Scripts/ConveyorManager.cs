@@ -11,6 +11,7 @@ public class ConveyorManager : MonoBehaviour
     [SerializeField] int spawnDirection;
     NodeManager nodeManager;
     ResourceSpawnerManager resourceSpawnerManager;
+    ResourceDepositManager resourceDepositManager;
     
     float elapsed = 0f;
     Dictionary<Vector2, List<Vector2>> conveyors = new Dictionary<Vector2, List<Vector2>>();
@@ -32,6 +33,7 @@ public class ConveyorManager : MonoBehaviour
     void Start()
     {
         nodeManager = FindAnyObjectByType<NodeManager>();
+        resourceDepositManager = FindAnyObjectByType<ResourceDepositManager>();
         resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
         StartCoroutine(MoveCoroutine());
     }
@@ -67,6 +69,10 @@ public class ConveyorManager : MonoBehaviour
         if (!nodeManager.CheckEmpty(next))
         {
             SetOwner(gridId);
+        }
+        if (nodeManager.CheckOwner(gridId) == gridId)
+        {
+            conveyors.Remove(gridId);
         }
         nodeManager.ResetNode(gridId);
     }
@@ -251,6 +257,7 @@ public class ConveyorManager : MonoBehaviour
     // Checks which objects to Move and adds them to a list also applies to spwners
     void MoveObjects()
     {
+        resourceDepositManager.AbsorbResource();
         foreach(var conveyor in conveyors)
         {
             //Debug.Log(conveyor.Value.Count);

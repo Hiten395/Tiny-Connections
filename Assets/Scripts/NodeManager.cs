@@ -8,6 +8,8 @@ public class NodeManager : MonoBehaviour
 {
     [SerializeField] NodeLimitsData nodeLimitsData;
 
+    ResourceDepositManager resourceDepositManager;
+
     Node[,] nodes;
     class Node
     {
@@ -32,7 +34,8 @@ public class NodeManager : MonoBehaviour
             }
         }
         
-        //Debug.Log("Nodes: " + nodes[0, 0].owner);
+        resourceDepositManager = FindAnyObjectByType<ResourceDepositManager>();
+        resourceDepositManager.SetDepositNodes();
     }
 
     // returns false, false if node can be occupied, true, false if conveyor, false, true if machine
@@ -89,6 +92,13 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    public void UpdateIsMachine(Vector2 gridId, bool state)
+    {
+        Node workingNode = nodes[(int)gridId.x, (int)gridId.y];
+        workingNode.isMachine = state;
+    }
+    
+
     // updates the nodes with the given information
     public void UpdateNode(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner, GameObject nodeObject)
     {
@@ -135,6 +145,10 @@ public class NodeManager : MonoBehaviour
         nodes[(int)gridId.x, (int)gridId.y].currentObject = testObject;
     }
     
+    public void Removeitem(Vector2 gridId)
+    {
+        nodes[(int)gridId.x, (int)gridId.y].currentObject = null;
+    }
     // moves the transport object to a new node of given direction
     public void UpdateNodePostion(Vector2 gridId, Vector2 dir)
     {

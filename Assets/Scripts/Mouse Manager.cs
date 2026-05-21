@@ -57,11 +57,11 @@ public class MouseManager : MonoBehaviour
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
         
-        if(!nodeManager.CheckStatus(gridId)[0])
+        if(nodeManager.CheckEmpty(gridId))
         {
             SpawnConveyor(gridId);
         }
-        else
+        else if (nodeManager.CheckStatus(gridId)[0])
         {
             conveyorManager.Details(gridId);
         }

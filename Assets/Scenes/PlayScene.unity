@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 339055325}
   - component: {fileID: 339055326}
   - component: {fileID: 339055327}
+  - component: {fileID: 339055328}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -261,7 +262,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawnerManager
   spawner: {fileID: 7980544370160687977, guid: 3346947b57f2a467abcecbb4369c8cdd, type: 3}
   nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
-  timeBetweenSpawns: 0
+  ticksBetweenSpawns: 4
+--- !u!114 &339055328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339055321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96107df656070467282ab5d6a8246c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceDepositManager
+  depositPrefab: {fileID: 1642796654891108326, guid: 0a579cfa495544d1ebfd0a7d833f3a5b, type: 3}
+  nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
