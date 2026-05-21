@@ -15,6 +15,7 @@ public class ResourceDepositManager : MonoBehaviour
 
     public void SetDepositNodes()
     {
+        
         nodeManager = FindAnyObjectByType<NodeManager>();
 
         deposit = Instantiate(depositPrefab, new Vector3(0,0,0), Quaternion.identity, transform);
@@ -42,13 +43,13 @@ public class ResourceDepositManager : MonoBehaviour
 
     public void AbsorbResource()
     {
+        //
         foreach(Vector2 gridId in absorbNodes)
         {
             GameObject item;
             if (nodeManager.CheckObject(gridId, out item))
             {
                 nodeManager.Removeitem(gridId);
-                Destroy(item);
             }
         }
     }

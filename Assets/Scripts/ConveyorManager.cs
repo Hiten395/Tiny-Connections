@@ -20,11 +20,13 @@ public class ConveyorManager : MonoBehaviour
     {
         public Vector3 dir;
         public GameObject thing;
+        public bool toDestroy;
 
-        public MovingObjects(Vector2 dir2, GameObject thing)
+        public MovingObjects(Vector2 dir2, GameObject thing, bool toDestroy)
         {
             dir = new Vector3(dir2.x, dir2.y, -2);
             this.thing = thing;
+            this.toDestroy = toDestroy;
         }
     }
 
@@ -53,7 +55,16 @@ public class ConveyorManager : MonoBehaviour
         {
             foreach(var block in movingObjects)
             {
-                block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1);
+                Debug.Log("test");
+                Debug.Log(block.toDestroy);
+                if (block.toDestroy)
+                {
+                    Destroy(block.thing);
+                }
+                else
+                {
+                    block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1);
+                }
             }
             elapsed = 0;
             movingObjects.Clear();
@@ -269,19 +280,25 @@ public class ConveyorManager : MonoBehaviour
                 GameObject currentObject;
                 if (nodeManager.CheckObject(gridId, out currentObject))
                 {
-                    //Debug.Log(currentObject);
                     List<Vector2>[] connections;
                     nodeManager.CheckConnections(gridId, out connections);
                     if (connections[1].Count > 0)
                     {
-                        //Debug.Log(connections[1][0]);
                         GameObject other;
                         if (!nodeManager.CheckObject(connections[1][0], out other))
                         {
                             Vector2 dir = connections[1][0] - gridId;
-                            movingObjects.Add(new MovingObjects(dir, currentObject));
-                            nodeManager.UpdateNodePostion(gridId, dir);
-
+                            if (nodeManager.CheckEmpty(connections[1][0]))
+                            {
+                                Debug.Log("test1");
+                                movingObjects.Add(new MovingObjects(dir, currentObject, true));
+                                nodeManager.Removeitem(gridId);
+                            }
+                            else
+                            {
+                                movingObjects.Add(new MovingObjects(dir, currentObject, false));
+                                nodeManager.UpdateNodePostion(gridId, dir);
+                            }
                         }
                     }
                 }

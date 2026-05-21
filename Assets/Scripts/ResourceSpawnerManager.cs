@@ -22,10 +22,13 @@ public class ResourceSpawnerManager : MonoBehaviour
     {
         public GameObject thing;
         public Vector2 dir;
-        public MovingObject(Vector2 dir2, GameObject thing)
+        public bool toDestroy;
+        public MovingObject(Vector2 dir2, GameObject thing, bool toDestroy)
         {
             dir = new Vector3(dir2.x, dir2.y, -2);
             this.thing = thing;
+            
+            this.toDestroy = toDestroy;
         }
     }
 
@@ -54,14 +57,21 @@ public class ResourceSpawnerManager : MonoBehaviour
         {
             foreach (var movingObject in movingObjects)
             {
-                movingObject.thing.transform.Translate((new Vector3(movingObject.dir.x, movingObject.dir.y, 0))* Time.deltaTime);
+                movingObject.thing.transform.Translate(new Vector3(movingObject.dir.x, movingObject.dir.y, 0)* Time.deltaTime);
             }
         }
         else
         {
             foreach(var block in movingObjects)
             {
-                block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1.5f);
+                if (block.toDestroy)
+                {
+                    Destroy(block.thing);
+                }
+                else
+                {
+                    block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1.5f);
+                }
             }
             elapsed = 0;
             movingObjects.Clear();
@@ -93,15 +103,22 @@ public class ResourceSpawnerManager : MonoBehaviour
             {
                 GameObject newItem = Instantiate(spawner.resource, new Vector3(spawner.nodeId.x + 0.5f - nodeLimitsData.width / 4, spawner.nodeId.y + 0.5f - nodeLimitsData.height / 4, -2f), Quaternion.identity, transform);
                 spawner.currentResource = newItem;
-                nodeManager.Additem(spawner.nodeId, newItem); 
-                Debug.Log("item added to nodeId: " + spawner.nodeId);               
+                nodeManager.Additem(spawner.nodeId, newItem);                
             }
             else if(!nodeManager.CheckObject(spawner.outGoingDirection, out item))
             {
-                movingObjects.Add(new MovingObject(spawner.outGoingDirection - spawner.nodeId, spawner.currentResource));
+
                 Vector2 dir = spawner.outGoingDirection - spawner.nodeId;
-                nodeManager.UpdateNodePostion(spawner.nodeId, dir);
-                //spawner.currentResource = null;
+                if (nodeManager.CheckEmpty(spawner.outGoingDirection))
+                {
+                    movingObjects.Add(new MovingObject(dir, spawner.currentResource, true));
+                    nodeManager.Removeitem(spawner.nodeId);
+                }
+                else
+                {
+                    movingObjects.Add(new MovingObject(dir, spawner.currentResource, false));
+                    nodeManager.UpdateNodePostion(spawner.nodeId, dir);
+                }
             }
         }
     }

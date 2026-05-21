@@ -149,7 +149,6 @@ public class NodeManager : MonoBehaviour
     {
         nodes[(int)gridId.x, (int)gridId.y].currentObject = null;
     }
-    // moves the transport object to a new node of given direction
     public void UpdateNodePostion(Vector2 gridId, Vector2 dir)
     {
         nodes[(int)(gridId.x + dir.x), (int)(gridId.y + dir.y)].currentObject = nodes[(int)gridId.x, (int)gridId.y].currentObject;
