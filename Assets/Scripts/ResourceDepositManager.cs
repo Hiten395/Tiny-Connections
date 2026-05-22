@@ -10,13 +10,21 @@ public class ResourceDepositManager : MonoBehaviour
     GameObject deposit;
     int sideLength;
 
-    List<Vector2> absorbNodes;
-    List<Vector2> inputNodes;
+    List<Vector2> absorbNodes = new List<Vector2>();
+    List<Vector2> inputNodes = new List<Vector2>();
 
     public void SetDepositNodes()
     {
         
+        absorbNodes.Clear();
+        inputNodes.Clear();
+
         nodeManager = FindAnyObjectByType<NodeManager>();
+        if (nodeManager == null || depositPrefab == null || nodeLimitsData == null)
+        {
+            Debug.LogWarning("ResourceDepositManager is missing a required reference.");
+            return;
+        }
 
         deposit = Instantiate(depositPrefab, new Vector3(0,0,0), Quaternion.identity, transform);
         sideLength = nodeLimitsData.width / 20;
@@ -37,13 +45,21 @@ public class ResourceDepositManager : MonoBehaviour
         
         foreach (Vector2 node in absorbNodes)
         {
-            nodeManager.UpdateIsMachine(node, true);
+            if (nodeManager.IsWithinBounds(node))
+            {
+                nodeManager.UpdateIsMachine(node, true);
+            }
         }
     }
 
     public void AbsorbResource()
     {
         //
+        if (nodeManager == null)
+        {
+            return;
+        }
+
         foreach(Vector2 gridId in absorbNodes)
         {
             GameObject item;

@@ -12,7 +12,7 @@ public class ConveyorManager : MonoBehaviour
     NodeManager nodeManager;
     ResourceSpawnerManager resourceSpawnerManager;
     ResourceDepositManager resourceDepositManager;
-    
+
     float elapsed = 0f;
     Dictionary<Vector2, List<Vector2>> conveyors = new Dictionary<Vector2, List<Vector2>>();
 
@@ -46,17 +46,15 @@ public class ConveyorManager : MonoBehaviour
 
         if (elapsed <= 1)
         {
-            foreach(var block in movingObjects)
+            foreach (var block in movingObjects)
             {
                 block.thing.transform.Translate(block.dir * Time.deltaTime);
             }
         }
         else
         {
-            foreach(var block in movingObjects)
+            foreach (var block in movingObjects)
             {
-                Debug.Log("test");
-                Debug.Log(block.toDestroy);
                 if (block.toDestroy)
                 {
                     Destroy(block.thing);
@@ -66,6 +64,7 @@ public class ConveyorManager : MonoBehaviour
                     block.thing.transform.position = new Vector3((float)Math.Floor(block.thing.transform.position.x) + 0.5f, (float)Math.Floor(block.thing.transform.position.y) + 0.5f, -1);
                 }
             }
+
             elapsed = 0;
             movingObjects.Clear();
         }
@@ -76,74 +75,75 @@ public class ConveyorManager : MonoBehaviour
     {
         List<Vector2>[] status;
         nodeManager.CheckConnections(gridId, out status);
-        Vector2 next = status[1][0];
-        if (!nodeManager.CheckEmpty(next))
+        if (status[1].Count > 0 && !nodeManager.CheckEmpty(status[1][0]))
         {
             SetOwner(gridId);
         }
+
         if (nodeManager.CheckOwner(gridId) == gridId)
         {
             conveyors.Remove(gridId);
         }
+
         nodeManager.ResetNode(gridId);
     }
+
     // builds a conveyor with a new line
     public void NewConveyor(Vector2 gridId)
     {
+        if (!nodeManager.CheckEmpty(gridId))
+        {
+            return;
+        }
+
         List<Vector2>[] status;
-        bool[] playstates = new bool[2];
-
-        
-        // checks if the node is empty or not
-        if (!(playstates[0] == false && playstates[1] == false)) return;
-
-        //gets information about the connections
-        playstates = nodeManager.CheckStatus(gridId);
         nodeManager.CheckConnections(gridId, out status);
 
-        //establises which operation to do
-        bool incoming = true;
-        bool outgoing = true;
-        if (!status[0].Any())
-        {
-            incoming = false;
-        }
-        if (!status[1].Any())
-        {
-            outgoing = false;
-        }
+        bool incoming = status[0].Any();
+        bool outgoing = status[1].Any();
 
-        if  (!incoming && !outgoing)
+        if (!incoming && !outgoing)
         {
             NewLine(gridId);
         }
-        else if(incoming && !outgoing)
+        else if (incoming && !outgoing)
         {
             Vector2 owner = nodeManager.CheckOwner(gridId);
             NewConveyor(gridId, owner);
         }
-        
     }
-    
+
     // makes a new line called when a new conveyor without owner is built
     void NewLine(Vector2 gridId)
     {
+        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
+        GameObject temp = Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
+        if (!nodeManager.UpdateNode(gridId, outgoingDirection, gridId, temp))
+        {
+            Destroy(temp);
+            Debug.LogWarning($"Cannot place conveyor at {gridId}: next node is outside the grid.");
+            return;
+        }
+
         conveyors.Add(gridId, new List<Vector2>());
         conveyors[gridId].Add(gridId);
-        GameObject temp = Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
-        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
-        nodeManager.UpdateNode(gridId, outgoingDirection, gridId, temp);
     }
-    
+
     // builds a new conveyor on an existing line
     void NewConveyor(Vector2 gridId, Vector2 owner)
     {
-        conveyors[owner].Add(gridId);
-        GameObject temp = Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
         Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
-        nodeManager.UpdateNode(gridId, outgoingDirection, owner, temp);
+        GameObject temp = Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
+        if (!nodeManager.UpdateNode(gridId, outgoingDirection, owner, temp))
+        {
+            Destroy(temp);
+            Debug.LogWarning($"Cannot extend conveyor at {gridId}: next node is outside the grid.");
+            return;
+        }
+
+        conveyors[owner].Add(gridId);
     }
-    
+
     // pass a gridID which on the conveyor, all conveyor after passed gridId have their owner set as the next gridId
     void SetOwner(Vector2 gridId)
     {
@@ -158,44 +158,42 @@ public class ConveyorManager : MonoBehaviour
                 break;
             }
         }
+
         i++;
         int id = i;
         var newOwner = conveyor[i];
         conveyors.Add(newOwner, new List<Vector2>());
-        Debug.Log(newOwner);
         for (; i < count; i++)
         {
             nodeManager.UpdateOwner(conveyor[i], newOwner);
             conveyors[newOwner].Add(conveyor[i]);
-            //conveyor.Remove(conveyor[id]);
         }
-        
+
         for (int j = id; j < i; i--)
         {
             conveyor.Remove(conveyor[j]);
         }
-        Debug.Log(i);
     }
-    
+
     // converts Vector2 to quaternion
     Vector2 OutGoingDirection(int dir)
     {
-        switch(dir)
+        switch (dir)
         {
             case 0:
-                return new Vector2(1,0);
-            case 90: 
-                return new Vector2(0,1);
+                return new Vector2(1, 0);
+            case 90:
+                return new Vector2(0, 1);
             case 180:
-                return new Vector2(-1,0);
+                return new Vector2(-1, 0);
             case 270:
-                return new Vector2(0,-1);
+                return new Vector2(0, -1);
             default:
                 Debug.Log("invalid direction return up");
-                return new Vector2(0,1);
+                return new Vector2(0, 1);
         }
     }
-    
+
     // sets direction using user input
     public void SetOutGoingDirection(Vector2 dir)
     {
@@ -222,7 +220,7 @@ public class ConveyorManager : MonoBehaviour
             }
         }
     }
-    
+
     // Prints details of given conveyor in the console
     public void Details(Vector2 gridId)
     {
@@ -234,11 +232,13 @@ public class ConveyorManager : MonoBehaviour
         {
             Debug.Log(status[0][i]);
         }
+
         Debug.Log("outgoing: ");
         for (int i = 0; i < status[1].Count; i++)
         {
             Debug.Log(status[1][i]);
         }
+
         Debug.Log("owner");
         Debug.Log(nodeManager.CheckOwner(gridId));
         Debug.Log("Object");
@@ -254,8 +254,8 @@ public class ConveyorManager : MonoBehaviour
 
         Debug.Log("            ");
     }
-    
-    // Calls To Refresh Moving Obejcts
+
+    // Calls To Refresh Moving Objects
     IEnumerator MoveCoroutine()
     {
         while (true)
@@ -265,18 +265,18 @@ public class ConveyorManager : MonoBehaviour
         }
     }
 
-    // Checks which objects to Move and adds them to a list also applies to spwners
+    // Checks which objects to Move and adds them to a list also applies to spawners
     void MoveObjects()
     {
-        resourceDepositManager.AbsorbResource();
-        foreach(var conveyor in conveyors)
+        if (resourceDepositManager != null)
         {
-            //Debug.Log(conveyor.Value.Count);
-            //foreach(var gridId in conveyor.Value)
+            resourceDepositManager.AbsorbResource();
+        }
+        foreach (var conveyor in conveyors)
+        {
             for (int i = conveyor.Value.Count - 1; i > -1; i--)
             {
                 Vector2 gridId = conveyor.Value[i];
-                // Debug.Log(gridId);
                 GameObject currentObject;
                 if (nodeManager.CheckObject(gridId, out currentObject))
                 {
@@ -290,7 +290,6 @@ public class ConveyorManager : MonoBehaviour
                             Vector2 dir = connections[1][0] - gridId;
                             if (nodeManager.CheckEmpty(connections[1][0]))
                             {
-                                Debug.Log("test1");
                                 movingObjects.Add(new MovingObjects(dir, currentObject, true));
                                 nodeManager.Removeitem(gridId);
                             }
@@ -304,6 +303,10 @@ public class ConveyorManager : MonoBehaviour
                 }
             }
         }
-        resourceSpawnerManager.NewResource();
+
+        if (resourceSpawnerManager != null)
+        {
+            resourceSpawnerManager.NewResource();
+        }
     }
 }

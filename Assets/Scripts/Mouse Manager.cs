@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class MouseManager : MonoBehaviour
 {
-    
     [SerializeField] NodeLimitsData nodelimits;
     [SerializeField] GameObject testobject;
     [SerializeField] GameObject Spanwer;
@@ -13,7 +12,7 @@ public class MouseManager : MonoBehaviour
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
     ResourceSpawnerManager resourceSpawnerManager;
-    Camera camera;
+    Camera mainCamera;
     int xoffset;
     int yoffset;
 
@@ -24,8 +23,7 @@ public class MouseManager : MonoBehaviour
         resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
         xoffset = nodelimits.width / 4;
         yoffset = nodelimits.height / 4;
-        camera = Camera.main;
-
+        mainCamera = Camera.main;
     }
 
     public void Test(InputAction.CallbackContext context)
@@ -33,31 +31,35 @@ public class MouseManager : MonoBehaviour
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
 
-        if (nodeManager.CheckStatus(gridId)[0] && spawnTestobject)
+        if (!nodeManager.IsWithinBounds(gridId)) return;
+
+        if (nodeManager.CheckEmpty(gridId) && spawnTestobject)
         {
             GameObject test = Instantiate(testobject, new Vector3(gridId.x + 0.5f - nodelimits.width / 4, gridId.y + 0.5f - nodelimits.height / 4, -1), Quaternion.identity, transform);
             nodeManager.Additem(gridId, test);
         }
-        else if(!spawnTestobject)
+        else if (!spawnTestobject)
         {
             resourceSpawnerManager.NewSpawner(gridId, testobject);
         }
-        
     }
 
     public void Direction(InputAction.CallbackContext context)
     {
-        if(!context.performed) return;
+        if (!context.performed) return;
         Vector2 dir = context.ReadValue<Vector2>();
         conveyorManager.SetOutGoingDirection(dir);
         resourceSpawnerManager.SpawnDirection(dir);
     }
+
     public void LeftClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
-        
-        if(nodeManager.CheckEmpty(gridId))
+
+        if (!nodeManager.IsWithinBounds(gridId)) return;
+
+        if (nodeManager.CheckEmpty(gridId))
         {
             SpawnConveyor(gridId);
         }
@@ -66,23 +68,25 @@ public class MouseManager : MonoBehaviour
             conveyorManager.Details(gridId);
         }
     }
+
     public void RightClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
 
-        if (nodeManager.CheckStatus(gridId)[1]) return;
-        
+        if (!nodeManager.IsWithinBounds(gridId) || nodeManager.CheckStatus(gridId)[1]) return;
+
         conveyorManager.DeleteConveyor(gridId);
     }
 
     Vector2 GetGridId()
     {
         Vector2 pos = Mouse.current.position.ReadValue();
-        Vector3 worldPos = camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 0));
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 0));
         Vector2 nodeID = new Vector2((int)Math.Floor(worldPos.x) + xoffset, (int)Math.Floor(worldPos.y) + yoffset);
         return nodeID;
     }
+
     void SpawnConveyor(Vector2 gridId)
     {
         conveyorManager.NewConveyor(gridId);
