@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Tiny-Connections.slnx",
+    "dotnet.defaultSolution": "Tiny Connections.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }
