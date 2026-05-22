@@ -515,6 +515,8 @@ GameObject:
   - component: {fileID: 339055324}
   - component: {fileID: 339055325}
   - component: {fileID: 339055326}
+  - component: {fileID: 339055327}
+  - component: {fileID: 339055328}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -552,6 +554,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseManager
   nodelimits: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
   testobject: {fileID: 7980544370160687977, guid: cfb9a9867b1fd497582d3897cc361aa8, type: 3}
+  Spanwer: {fileID: 0}
+  spawnTestobject: 0
 --- !u!114 &339055324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -616,6 +620,7 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!114 &428668187
+--- !u!114 &339055327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -633,6 +638,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
 --- !u!114 &428668188
+  m_GameObject: {fileID: 339055321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2358ba45902e64d4885d370afacc93cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawnerManager
+  spawner: {fileID: 7980544370160687977, guid: 3346947b57f2a467abcecbb4369c8cdd, type: 3}
+  nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
+  ticksBetweenSpawns: 4
+--- !u!114 &339055328
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -700,6 +715,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+  m_GameObject: {fileID: 339055321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96107df656070467282ab5d6a8246c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceDepositManager
+  depositPrefab: {fileID: 1642796654891108326, guid: 0a579cfa495544d1ebfd0a7d833f3a5b, type: 3}
+  nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -987,6 +1010,7 @@ Transform:
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &826013632
+--- !u!1 &1897755458
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1001,6 +1025,10 @@ GameObject:
   - component: {fileID: 826013634}
   m_Layer: 5
   m_Name: Exit
+  - component: {fileID: 1897755460}
+  - component: {fileID: 1897755459}
+  m_Layer: 0
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1047,6 +1075,9 @@ MonoBehaviour:
   m_LayoutPriority: 1
 --- !u!114 &826013635
 MonoBehaviour:
+--- !u!212 &1897755459
+SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1665,6 +1696,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1897755458}
+  m_GameObject: {fileID: 1897755458}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -1791,6 +1823,19 @@ MonoBehaviour:
     m_ActionName: 'Play/Left[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 339055323}
+        m_TargetAssemblyTypeName: MouseManager, Assembly-CSharp
+        m_MethodName: RightClick
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: cf942e75-0b93-4c4f-9161-c3e428630c83
     m_ActionName: 'Play/Right[/Mouse/rightButton]'
   - m_PersistentCalls:
@@ -1809,6 +1854,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e782b40f-3128-4035-9734-b9a82b45c487
     m_ActionName: 'Play/Test[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 339055323}
+        m_TargetAssemblyTypeName: MouseManager, Assembly-CSharp
+        m_MethodName: Direction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9a33468a-1bbe-4fdc-9d03-7034bdfdb234
+    m_ActionName: 'Play/Directions[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Play
