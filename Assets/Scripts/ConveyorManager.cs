@@ -85,19 +85,29 @@ public class ConveyorManager : MonoBehaviour
 
     void NewLine(Vector2 gridId)
     {
+        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
+        if (!nodeManager.UpdateNode(gridId, outgoingDirection, gridId))
+        {
+            Debug.LogWarning($"Cannot place conveyor at {gridId}: next node is outside the grid.");
+            return;
+        }
+
         conveyors.Add(gridId, new List<Vector2>());
         conveyors[gridId].Add(gridId);
         Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
-        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
-        nodeManager.UpdateNode(gridId, outgoingDirection, gridId);
     }
 
     void NewConveyor(Vector2 gridId, Vector2 owner)
     {
+        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
+        if (!nodeManager.UpdateNode(gridId, outgoingDirection, owner))
+        {
+            Debug.LogWarning($"Cannot extend conveyor at {gridId}: next node is outside the grid.");
+            return;
+        }
+
         conveyors[owner].Add(gridId);
         Instantiate(converyorBlock, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1), Quaternion.Euler(0, 0, spawnDirection), transform);
-        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
-        nodeManager.UpdateNode(gridId, outgoingDirection, owner);
     }
 
     Vector2 OutGoingDirection(int dir)

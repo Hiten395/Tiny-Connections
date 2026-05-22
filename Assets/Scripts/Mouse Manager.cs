@@ -10,7 +10,7 @@ public class MouseManager : MonoBehaviour
     [SerializeField] GameObject testobject;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
-    Camera camera;
+    Camera mainCamera;
     int xoffset;
     int yoffset;
 
@@ -20,7 +20,7 @@ public class MouseManager : MonoBehaviour
         conveyorManager = FindAnyObjectByType<ConveyorManager>();
         xoffset = nodelimits.width / 4;
         yoffset = nodelimits.height / 4;
-        camera = Camera.main;
+        mainCamera = Camera.main;
 
     }
 
@@ -28,6 +28,8 @@ public class MouseManager : MonoBehaviour
     {
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
+
+        if (!nodeManager.IsWithinBounds(gridId)) return;
 
         if (!nodeManager.CheckStatus(gridId))
         {
@@ -40,6 +42,8 @@ public class MouseManager : MonoBehaviour
     {
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
+
+        if (!nodeManager.IsWithinBounds(gridId)) return;
         
         if(nodeManager.CheckStatus(gridId))
         {
@@ -54,7 +58,7 @@ public class MouseManager : MonoBehaviour
     Vector2 GetGridId()
     {
         Vector2 pos = Mouse.current.position.ReadValue();
-        Vector3 worldPos = camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 0));
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 0));
         Vector2 nodeID = new Vector2((int)Math.Floor(worldPos.x) + xoffset, (int)Math.Floor(worldPos.y) + yoffset);
         return nodeID;
     }
