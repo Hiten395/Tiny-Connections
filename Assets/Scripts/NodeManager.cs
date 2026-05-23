@@ -160,6 +160,11 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    public void SetIncomingDirection(Vector2 selectedNode, Vector2 relativeDirection)
+    {
+        Node workingNode = nodes[(int)selectedNode.x, (int)selectedNode.y];
+        workingNode.incoming.Add(selectedNode + relativeDirection);
+    }
     // updates the owner of a selected node
     public void UpdateOwner(Vector2 gridId, Vector2 owner)
     {

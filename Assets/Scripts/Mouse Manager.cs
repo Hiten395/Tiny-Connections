@@ -6,12 +6,20 @@ using UnityEngine.InputSystem;
 public class MouseManager : MonoBehaviour
 {
     [SerializeField] NodeLimitsData nodelimits;
+
+
+    /// <summary>
+    /// The below two variable i.e. testobject and recipe tell the spwner and processor
+    /// resource / recipe to follow. Function to maipulate these values can be added for usage
+    /// </summary>
     [SerializeField] GameObject testobject;
-    [SerializeField] GameObject Spanwer;
+    [SerializeField] Recipe recipe;
+    [SerializeField] bool spawnProcessor;
     [SerializeField] bool spawnTestobject;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
     ResourceSpawnerManager resourceSpawnerManager;
+    MachineManage machineManager;
     Camera mainCamera;
     int xoffset;
     int yoffset;
@@ -21,6 +29,7 @@ public class MouseManager : MonoBehaviour
         nodeManager = FindAnyObjectByType<NodeManager>();
         conveyorManager = FindAnyObjectByType<ConveyorManager>();
         resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
+        machineManager = FindAnyObjectByType<MachineManage>();
         xoffset = nodelimits.width / 4;
         yoffset = nodelimits.height / 4;
         mainCamera = Camera.main;
@@ -30,6 +39,12 @@ public class MouseManager : MonoBehaviour
     {
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
+
+        if (nodeManager.CheckEmpty(gridId) && spawnProcessor)
+        {
+            machineManager.NewMachine(gridId, recipe);
+            return;
+        }
 
         if (!nodeManager.IsWithinBounds(gridId)) return;
 
@@ -50,6 +65,7 @@ public class MouseManager : MonoBehaviour
         Vector2 dir = context.ReadValue<Vector2>();
         conveyorManager.SetOutGoingDirection(dir);
         resourceSpawnerManager.SpawnDirection(dir);
+        machineManager.SetOutGoingDirection(dir);
     }
 
     public void LeftClick(InputAction.CallbackContext context)

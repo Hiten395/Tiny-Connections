@@ -12,6 +12,7 @@ public class ConveyorManager : MonoBehaviour
     NodeManager nodeManager;
     ResourceSpawnerManager resourceSpawnerManager;
     ResourceDepositManager resourceDepositManager;
+    MachineManage machineManage;
 
     float elapsed = 0f;
     Dictionary<Vector2, List<Vector2>> conveyors = new Dictionary<Vector2, List<Vector2>>();
@@ -37,6 +38,7 @@ public class ConveyorManager : MonoBehaviour
         nodeManager = FindAnyObjectByType<NodeManager>();
         resourceDepositManager = FindAnyObjectByType<ResourceDepositManager>();
         resourceSpawnerManager = FindAnyObjectByType<ResourceSpawnerManager>();
+        machineManage = FindAnyObjectByType<MachineManage>();
         StartCoroutine(MoveCoroutine());
     }
 
@@ -307,6 +309,10 @@ public class ConveyorManager : MonoBehaviour
         if (resourceSpawnerManager != null)
         {
             resourceSpawnerManager.NewResource();
+        }
+        if (machineManage != null)
+        {
+            machineManage.Process();
         }
     }
 }

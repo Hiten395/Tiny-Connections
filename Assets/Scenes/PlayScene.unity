@@ -517,6 +517,7 @@ GameObject:
   - component: {fileID: 339055326}
   - component: {fileID: 339055327}
   - component: {fileID: 339055328}
+  - component: {fileID: 339055329}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -555,6 +556,9 @@ MonoBehaviour:
   nodelimits: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
   testobject: {fileID: 7980544370160687977, guid: cfb9a9867b1fd497582d3897cc361aa8, type: 3}
   Spanwer: {fileID: 0}
+  recipe: {fileID: 11400000, guid: ab2692819eef4443db17b3d4816d2782, type: 2}
+  spawnProcessor: 0
+  spawnMachine: 0
   spawnTestobject: 0
 --- !u!114 &339055324
 MonoBehaviour:
@@ -614,8 +618,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawnerManager
   spawner: {fileID: 7980544370160687977, guid: 3346947b57f2a467abcecbb4369c8cdd, type: 3}
   nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
-  ticksBetweenSpawns: 4
+  ticksBetweenSpawns: 1
 --- !u!114 &339055328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339055321}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96107df656070467282ab5d6a8246c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceDepositManager
+  depositPrefab: {fileID: 1642796654891108326, guid: 0a579cfa495544d1ebfd0a7d833f3a5b, type: 3}
+  nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
+--- !u!114 &339055329
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -624,11 +642,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 339055321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96107df656070467282ab5d6a8246c8c, type: 3}
+  m_Script: {fileID: 11500000, guid: d2f019f3deeaf48ada33d8ca479889c0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ResourceDepositManager
-  depositPrefab: {fileID: 1642796654891108326, guid: 0a579cfa495544d1ebfd0a7d833f3a5b, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::MachineManage
   nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
+  machine: {fileID: 6828384964645980603, guid: fb6b897b2865a451d976076cdfe6cd4e, type: 3}
 --- !u!1 &428668186
 GameObject:
   m_ObjectHideFlags: 0
