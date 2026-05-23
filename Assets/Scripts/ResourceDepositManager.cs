@@ -5,20 +5,23 @@ public class ResourceDepositManager : MonoBehaviour
 {
     [SerializeField] GameObject depositPrefab;
     [SerializeField] NodeLimitsData nodeLimitsData;
+    [SerializeField] int timeBetweenNewResourceAdded;
+
+    LoseManager loseManager;
 
     NodeManager nodeManager;
-
+    //
     List<Vector2> absorbNodes;
+
+    void Start()
+    {
+        loseManager = FindAnyObjectByType<LoseManager>();
+    }
 
     public void SetDepositNodes()
     {
         absorbNodes.Clear();
         nodeManager = FindAnyObjectByType<NodeManager>();
-        if (nodeManager == null || depositPrefab == null || nodeLimitsData == null)
-        {
-            Debug.LogWarning("ResourceDepositManager is missing a required reference.");
-            return;
-        }
 
         Instantiate(depositPrefab, new Vector3(0,0,0), Quaternion.identity, transform);
         Vector2 bottomleft = new Vector2((nodeLimitsData.width / 4) - 1, (nodeLimitsData.height / 4) - 1);
@@ -44,6 +47,8 @@ public class ResourceDepositManager : MonoBehaviour
             if (nodeManager.CheckObject(gridId, out item))
             {
                 nodeManager.Removeitem(gridId);
+                loseManager.AddResource(item.GetComponent<ID>().id);
+                Destroy(item);
             }
         }
     }
