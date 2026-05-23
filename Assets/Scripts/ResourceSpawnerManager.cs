@@ -57,6 +57,11 @@ public class ResourceSpawnerManager : MonoBehaviour
         {
             foreach (var movingObject in movingObjects)
             {
+                if (movingObject.thing == null)
+                {
+                    continue;
+                }
+
                 movingObject.thing.transform.Translate(new Vector3(movingObject.dir.x, movingObject.dir.y, 0)* Time.deltaTime);
             }
         }
@@ -64,6 +69,11 @@ public class ResourceSpawnerManager : MonoBehaviour
         {
             foreach(var block in movingObjects)
             {
+                if (block.thing == null)
+                {
+                    continue;
+                }
+
                 if (block.toDestroy)
                 {
                     Destroy(block.thing);
@@ -87,6 +97,11 @@ public class ResourceSpawnerManager : MonoBehaviour
 
     public void NewResource()
     {
+        if (nodeManager == null || nodeLimitsData == null)
+        {
+            return;
+        }
+
         if (!(ticks == ticksBetweenSpawns))
         {
             ticks++;
@@ -107,17 +122,22 @@ public class ResourceSpawnerManager : MonoBehaviour
             }
             else if(!nodeManager.CheckObject(spawner.outGoingDirection, out item))
             {
-
+                nodeManager.CheckObject(spawner.nodeId, out spawner.currentResource);
                 Vector2 dir = spawner.outGoingDirection - spawner.nodeId;
                 if (nodeManager.CheckEmpty(spawner.outGoingDirection))
                 {
-                    movingObjects.Add(new MovingObject(dir, spawner.currentResource, true));
+                    if (spawner.currentResource != null)
+                    {
+                        movingObjects.Add(new MovingObject(dir, spawner.currentResource, true));
+                    }
                     nodeManager.Removeitem(spawner.nodeId);
                 }
                 else
                 {
-                    movingObjects.Add(new MovingObject(dir, spawner.currentResource, false));
-                    nodeManager.UpdateNodePostion(spawner.nodeId, dir);
+                    if (spawner.currentResource != null && nodeManager.UpdateNodePostion(spawner.nodeId, dir))
+                    {
+                        movingObjects.Add(new MovingObject(dir, spawner.currentResource, false));
+                    }
                 }
             }
         }
@@ -125,6 +145,11 @@ public class ResourceSpawnerManager : MonoBehaviour
 
     public void NewSpawner(Vector2 gridId, GameObject resource)
     {
+        if (nodeManager == null || spawner == null || nodeLimitsData == null)
+        {
+            return;
+        }
+
         if (!nodeManager.CheckEmpty(gridId))
         {
             return;
