@@ -11,7 +11,7 @@ public class ResourceDepositManager : MonoBehaviour
 
     NodeManager nodeManager;
     //
-    List<Vector2> absorbNodes;
+    List<Vector2> absorbNodes = new List<Vector2>();
 
     void Start()
     {
@@ -22,6 +22,12 @@ public class ResourceDepositManager : MonoBehaviour
     {
         absorbNodes.Clear();
         nodeManager = FindAnyObjectByType<NodeManager>();
+        loseManager = FindAnyObjectByType<LoseManager>();
+        if (nodeManager == null || depositPrefab == null || nodeLimitsData == null)
+        {
+            Debug.LogWarning("ResourceDepositManager is missing a required reference.");
+            return;
+        }
 
         Instantiate(depositPrefab, new Vector3(0,0,0), Quaternion.identity, transform);
         Vector2 bottomleft = new Vector2((nodeLimitsData.width / 4) - 1, (nodeLimitsData.height / 4) - 1);
@@ -41,13 +47,22 @@ public class ResourceDepositManager : MonoBehaviour
 
     public void AbsorbResource()
     {
+        if (nodeManager == null || absorbNodes == null)
+        {
+            return;
+        }
+
         foreach(Vector2 gridId in absorbNodes)
         {
             GameObject item;
             if (nodeManager.CheckObject(gridId, out item))
             {
                 nodeManager.Removeitem(gridId);
-                loseManager.AddResource(item.GetComponent<ID>().id);
+                ID itemId = item.GetComponent<ID>();
+                if (loseManager != null && itemId != null)
+                {
+                    loseManager.AddResource(itemId.id);
+                }
                 Destroy(item);
             }
         }
