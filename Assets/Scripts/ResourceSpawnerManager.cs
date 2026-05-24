@@ -150,14 +150,21 @@ public class ResourceSpawnerManager : MonoBehaviour
             return;
         }
 
-        if (!nodeManager.CheckEmpty(gridId))
+        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
+
+        if (!nodeManager.CheckEmpty(gridId) || !nodeManager.IsWithinBounds(gridId + outgoingDirection))
         {
             return;
         }
 
         GameObject self = Instantiate(spawner, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1.5f), Quaternion.Euler(0, 0, spawnDirection), transform);
-        spanwers.Add(new Spanwer(gridId, gridId + OutGoingDirection(spawnDirection), resource, self));
-        nodeManager.SetOutGoingDirection(gridId, gridId + OutGoingDirection(spawnDirection));
+        if (!nodeManager.UpdateNode(gridId, outgoingDirection, gridId, self))
+        {
+            Destroy(self);
+            return;
+        }
+
+        spanwers.Add(new Spanwer(gridId, gridId + outgoingDirection, resource, self));
     }
 
     public void SpawnDirection(Vector2 dir)

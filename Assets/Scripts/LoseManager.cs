@@ -16,6 +16,34 @@ public class LoseManager : MonoBehaviour
 
 
     int currentResources = 1;
+    bool gameOverTriggered;
+
+    public float SupplyPercent
+    {
+        get
+        {
+            if (resources.Count == 0 || startingQuantity <= 0)
+            {
+                return 1f;
+            }
+
+            int lowestResource = resources.Values.Min();
+            return Mathf.Clamp01((float)lowestResource / startingQuantity);
+        }
+    }
+
+    public int LowestResourceCount
+    {
+        get
+        {
+            if (resources.Count == 0)
+            {
+                return startingQuantity;
+            }
+
+            return resources.Values.Min();
+        }
+    }
 
     void Start()
     {
@@ -26,31 +54,40 @@ public class LoseManager : MonoBehaviour
 
     IEnumerator Deplete()
     {
-        yield return new WaitForSeconds(timeBetweenDepletion);
-
-        Debug.Log("Resource Depleted");
-
-        var keys = resources.Keys.ToList();  
-
-        foreach (var key in keys)
+        while (!gameOverTriggered)
         {
-            resources[key]--;
+            yield return new WaitForSeconds(timeBetweenDepletion);
 
-            if (resources[key] < 1)
+            Debug.Log("Resource Depleted");
+
+            var keys = resources.Keys.ToList();
+
+            foreach (var key in keys)
             {
-                Debug.Log("gameOver");
-                gameOverEvent.Invoke();
+                resources[key]--;
+
+                if (resources[key] < 1)
+                {
+                    Debug.Log("gameOver");
+                    gameOverTriggered = true;
+                    gameOverEvent.Invoke();
+                    yield break;
+                }
             }
         }
     }
 
     IEnumerator NewResource()
     {
-        yield return new WaitForSeconds(timeBetweenNewResourceAdded);
-
-        if (currentResources < objectToIdForRecipies.data.Count)
+        while (!gameOverTriggered)
         {
-            resources.Add(currentResources, startingQuantity);
+            yield return new WaitForSeconds(timeBetweenNewResourceAdded);
+
+            if (objectToIdForRecipies != null && currentResources < objectToIdForRecipies.data.Count)
+            {
+                resources.Add(currentResources, startingQuantity);
+                currentResources++;
+            }
         }
     }
 

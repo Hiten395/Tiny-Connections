@@ -150,7 +150,11 @@ public class ConveyorManager : MonoBehaviour
     void SetOwner(Vector2 gridId)
     {
         Vector2 owner = nodeManager.CheckOwner(gridId);
-        var conveyor = conveyors[owner];
+        if (!conveyors.TryGetValue(owner, out var conveyor))
+        {
+            return;
+        }
+
         int count = conveyor.Count();
         int i = 0;
         for (; i < count; i++)
@@ -162,6 +166,11 @@ public class ConveyorManager : MonoBehaviour
         }
 
         i++;
+        if (i >= count)
+        {
+            return;
+        }
+
         int id = i;
         var newOwner = conveyor[i];
         conveyors.Add(newOwner, new List<Vector2>());

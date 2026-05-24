@@ -5,6 +5,14 @@ using UnityEngine.InputSystem;
 
 public class MouseManager : MonoBehaviour
 {
+    public enum BuildMode
+    {
+        Conveyor,
+        Spawner,
+        Machine,
+        Delete
+    }
+
     [SerializeField] NodeLimitsData nodelimits;
 
 
@@ -16,6 +24,7 @@ public class MouseManager : MonoBehaviour
     [SerializeField] Recipe recipe;
     [SerializeField] bool spawnProcessor;
     [SerializeField] bool spawnTestobject;
+    [SerializeField] BuildMode currentBuildMode = BuildMode.Conveyor;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
     ResourceSpawnerManager resourceSpawnerManager;
@@ -75,13 +84,27 @@ public class MouseManager : MonoBehaviour
 
         if (!nodeManager.IsWithinBounds(gridId)) return;
 
-        if (nodeManager.CheckEmpty(gridId))
+        switch (currentBuildMode)
         {
-            SpawnConveyor(gridId);
-        }
-        else if (nodeManager.CheckStatus(gridId)[0])
-        {
-            conveyorManager.Details(gridId);
+            case BuildMode.Conveyor:
+                if (nodeManager.CheckEmpty(gridId))
+                {
+                    SpawnConveyor(gridId);
+                }
+                else if (nodeManager.CheckStatus(gridId)[0])
+                {
+                    conveyorManager.Details(gridId);
+                }
+                break;
+            case BuildMode.Spawner:
+                resourceSpawnerManager.NewSpawner(gridId, testobject);
+                break;
+            case BuildMode.Machine:
+                machineManager.NewMachine(gridId, recipe);
+                break;
+            case BuildMode.Delete:
+                DeleteConveyor(gridId);
+                break;
         }
     }
 
@@ -90,9 +113,7 @@ public class MouseManager : MonoBehaviour
         if (!context.performed) return;
         Vector2 gridId = GetGridId();
 
-        if (!nodeManager.IsWithinBounds(gridId) || nodeManager.CheckStatus(gridId)[1]) return;
-
-        conveyorManager.DeleteConveyor(gridId);
+        DeleteConveyor(gridId);
     }
 
     Vector2 GetGridId()
@@ -106,5 +127,37 @@ public class MouseManager : MonoBehaviour
     void SpawnConveyor(Vector2 gridId)
     {
         conveyorManager.NewConveyor(gridId);
+    }
+
+    void DeleteConveyor(Vector2 gridId)
+    {
+        if (!nodeManager.IsWithinBounds(gridId) || nodeManager.CheckStatus(gridId)[1]) return;
+
+        conveyorManager.DeleteConveyor(gridId);
+    }
+
+    public void SetBuildMode(BuildMode buildMode)
+    {
+        currentBuildMode = buildMode;
+    }
+
+    public void SetConveyorMode()
+    {
+        SetBuildMode(BuildMode.Conveyor);
+    }
+
+    public void SetSpawnerMode()
+    {
+        SetBuildMode(BuildMode.Spawner);
+    }
+
+    public void SetMachineMode()
+    {
+        SetBuildMode(BuildMode.Machine);
+    }
+
+    public void SetDeleteMode()
+    {
+        SetBuildMode(BuildMode.Delete);
     }
 }
