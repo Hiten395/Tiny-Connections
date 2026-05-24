@@ -28,10 +28,13 @@ public class MachineManage : MonoBehaviour
         public Vector3 dir;
         public GameObject thing;
         public bool toDestroy;
+        public Vector3 gridId;
 
-        public MovingObject(Vector2 dir2, GameObject thing, bool toDestroy)
+        public MovingObject(Vector2 pos, Vector2 dir2, GameObject thing, bool toDestroy)
         {
-            dir = new Vector3(dir2.x, dir2.y, -2);
+            dir = new Vector3(dir2.x, dir2.y, 0);
+            gridId = new Vector3(pos.x, pos.y, 0);
+            
             this.thing = thing;
             this.toDestroy = toDestroy;
         }
@@ -59,6 +62,7 @@ public class MachineManage : MonoBehaviour
         {
             foreach (var block in movingObjects)
             {
+                Debug.Log(block.dir);
                 block.thing.transform.Translate(block.dir * Time.deltaTime);
             }
         }
@@ -69,6 +73,10 @@ public class MachineManage : MonoBehaviour
                 if (block.toDestroy)
                 {
                     Destroy(block.thing); 
+                }
+                else
+                {
+                    nodeManager.Additem(block.dir + block.gridId, block.thing);
                 }
             }
 
@@ -83,6 +91,8 @@ public class MachineManage : MonoBehaviour
     {
         if (nodeManager.CheckEmpty(gridId))
         {
+            Debug.Log(gridId + " " + OutGoingDirection(spawnDirection));
+            Debug.Log(gridId + OutGoingDirection(spawnDirection));
             GameObject instance = Instantiate(machine, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -10), Quaternion.Euler(0,0,spawnDirection), transform);
             Machine machine2 = new Machine(gridId, gridId + OutGoingDirection(spawnDirection), instance, recipe);
             machine2.recipe.ResetTracker();
@@ -126,16 +136,17 @@ public class MachineManage : MonoBehaviour
         GameObject currentItem = Instantiate(recipe.GetOutPut(recipe.output), new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -2f), Quaternion.identity, transform);
         GameObject temp;
         Vector2 dir = outgoingDirection - gridId;
+        Debug.Log(dir);
+        Debug.Log(outgoingDirection + " " + gridId);
         if (!nodeManager.CheckObject(outgoingDirection, out temp))
         {
             if (nodeManager.CheckEmpty(outgoingDirection))
             {
-                movingObjects.Add(new MovingObject(dir, currentItem, true));
+                movingObjects.Add(new MovingObject(gridId, dir, currentItem, true));
             }
             else
             {
-                movingObjects.Add(new MovingObject(dir, currentItem, false));
-                nodeManager.Additem(outgoingDirection, currentItem);
+                movingObjects.Add(new MovingObject(gridId, dir, currentItem, false));
             }
         }
         recipe.ResetTracker();

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectToIdForRecipies
   data:
   - {fileID: 7980544370160687977, guid: cfb9a9867b1fd497582d3897cc361aa8, type: 3}
+  - {fileID: 7980544370160687977, guid: 8410ba73428f34b958d4c234e734210a, type: 3}

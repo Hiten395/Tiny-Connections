@@ -16,10 +16,6 @@ public class MouseManager : MonoBehaviour
     [SerializeField] NodeLimitsData nodelimits;
 
 
-    /// <summary>
-    /// The below two variable i.e. testobject and recipe tell the spwner and processor
-    /// resource / recipe to follow. Function to maipulate these values can be added for usage
-    /// </summary>
     [SerializeField] GameObject testobject;
     [SerializeField] Recipe recipe;
     [SerializeField] bool spawnProcessor;
@@ -42,30 +38,6 @@ public class MouseManager : MonoBehaviour
         xoffset = nodelimits.width / 4;
         yoffset = nodelimits.height / 4;
         mainCamera = Camera.main;
-    }
-
-    public void Test(InputAction.CallbackContext context)
-    {
-        if (!context.performed) return;
-        Vector2 gridId = GetGridId();
-
-        if (nodeManager.CheckEmpty(gridId) && spawnProcessor)
-        {
-            machineManager.NewMachine(gridId, recipe);
-            return;
-        }
-
-        if (!nodeManager.IsWithinBounds(gridId)) return;
-
-        if (nodeManager.CheckEmpty(gridId) && spawnTestobject)
-        {
-            GameObject test = Instantiate(testobject, new Vector3(gridId.x + 0.5f - nodelimits.width / 4, gridId.y + 0.5f - nodelimits.height / 4, -1), Quaternion.identity, transform);
-            nodeManager.Additem(gridId, test);
-        }
-        else if (!spawnTestobject)
-        {
-            resourceSpawnerManager.NewSpawner(gridId, testobject);
-        }
     }
 
     public void Direction(InputAction.CallbackContext context)
@@ -106,14 +78,6 @@ public class MouseManager : MonoBehaviour
                 DeleteConveyor(gridId);
                 break;
         }
-    }
-
-    public void RightClick(InputAction.CallbackContext context)
-    {
-        if (!context.performed) return;
-        Vector2 gridId = GetGridId();
-
-        DeleteConveyor(gridId);
     }
 
     Vector2 GetGridId()

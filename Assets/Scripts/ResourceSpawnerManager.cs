@@ -158,7 +158,7 @@ public class ResourceSpawnerManager : MonoBehaviour
         }
 
         GameObject self = Instantiate(spawner, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1.5f), Quaternion.Euler(0, 0, spawnDirection), transform);
-        if (!nodeManager.UpdateNode(gridId, outgoingDirection, gridId, self))
+        if (!nodeManager.UpdateNodeMachine(gridId, outgoingDirection, gridId, self))
         {
             Destroy(self);
             return;

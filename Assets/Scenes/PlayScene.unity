@@ -1018,7 +1018,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 162, y: 133.13}
+  m_AnchoredPosition: {x: 162, y: 112}
   m_SizeDelta: {x: 296.9714, y: 52.6057}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &250737578
@@ -1536,7 +1536,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 339055321}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96107df656070467282ab5d6a8246c8c, type: 3}
   m_Name: 
@@ -1573,7 +1573,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoseManager
   startingQuantity: 10
   timeBetweenDepletion: 5
-  timeBetweenNewResourceAdded: 30
+  timeBetweenNewResourceAdded: 10
   objectToIdForRecipies: {fileID: 11400000, guid: 5abb3d1b955e749c184a0280e312ed0b, type: 2}
   gameOverEvent:
     m_PersistentCalls:
@@ -1996,7 +1996,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4749,7 +4749,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -146.42, y: 133.13}
+  m_AnchoredPosition: {x: -146.42, y: 112}
   m_SizeDelta: {x: 319.8666, y: 52.609}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1872480125

@@ -40,6 +40,7 @@ public class ResourceDepositManager : MonoBehaviour
         {
             if (nodeManager.IsWithinBounds(node))
             {
+                //Debug.Log(node);
                 nodeManager.UpdateIsMachine(node, true);
             }
         }

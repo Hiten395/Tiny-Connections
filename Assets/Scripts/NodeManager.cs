@@ -145,7 +145,21 @@ public class NodeManager : MonoBehaviour
         target.owner = owner;
         return true;
     }
+    
+    public bool UpdateNodeMachine(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner, GameObject nodeObject)
+    {
+        Vector2 targetNode = selectedNode + outgoingDirection;
+        if (!TryGetNode(selectedNode, out Node workingNode) || !TryGetNode(targetNode, out Node target))
+        {
+            return false;
+        }
 
+        workingNode.nodeObject = nodeObject;
+        workingNode.isInUse = true;
+        workingNode.outgoing.Add(targetNode);
+        workingNode.owner = owner;
+        return true;
+    }
     public bool UpdateNode(Vector2 selectedNode, Vector2 outgoingDirection, Vector2 owner)
     {
         return UpdateNode(selectedNode, outgoingDirection, owner, null);

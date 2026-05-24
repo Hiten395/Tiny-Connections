@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2858e8927186434a9c83c3bd262303e, type: 3}
   m_Name: GroundData
   m_EditorClassIdentifier: Assembly-CSharp::NodeLimitsData
-  width: 20
-  height: 20
+  width: 60
+  height: 40
