@@ -91,8 +91,8 @@ public class MachineManage : MonoBehaviour
     {
         if (nodeManager.CheckEmpty(gridId))
         {
-            Debug.Log(gridId + " " + OutGoingDirection(spawnDirection));
-            Debug.Log(gridId + OutGoingDirection(spawnDirection));
+            // Debug.Log(gridId + " " + OutGoingDirection(spawnDirection));
+            // Debug.Log(gridId + OutGoingDirection(spawnDirection));
             GameObject instance = Instantiate(machine, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -10), Quaternion.Euler(0,0,spawnDirection), transform);
             Machine machine2 = new Machine(gridId, gridId + OutGoingDirection(spawnDirection), instance, recipe);
             machine2.recipe.ResetTracker();
@@ -117,6 +117,7 @@ public class MachineManage : MonoBehaviour
                 int id = gridObject.GetComponent<ID>().id;
                 nodeManager.Removeitem(gridId);
                 recipe.inputTracker.Remove(id);
+                //Destroy(gridObject);
                 if (recipe.inputTracker.Count == 0 && currentOutput == null)
                 {
                     StartCoroutine(ManufatureOutput(machine.Value));

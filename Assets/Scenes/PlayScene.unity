@@ -1272,7 +1272,7 @@ GameObject:
   - component: {fileID: 302561826}
   - component: {fileID: 302561825}
   m_Layer: 5
-  m_Name: SpawnerButton
+  m_Name: RecipeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1466,10 +1466,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseManager
   nodelimits: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
   testobject: {fileID: 7980544370160687977, guid: cfb9a9867b1fd497582d3897cc361aa8, type: 3}
-  recipe: {fileID: 11400000, guid: ab2692819eef4443db17b3d4816d2782, type: 2}
   spawnProcessor: 0
   spawnTestobject: 0
   currentBuildMode: 0
+  recipes:
+  - {fileID: 11400000, guid: ab2692819eef4443db17b3d4816d2782, type: 2}
+  - {fileID: 11400000, guid: a1481593e942b41d09f2a95bd431bd49, type: 2}
 --- !u!114 &339055324
 MonoBehaviour:
   m_ObjectHideFlags: 0

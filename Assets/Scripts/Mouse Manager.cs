@@ -8,7 +8,6 @@ public class MouseManager : MonoBehaviour
     public enum BuildMode
     {
         Conveyor,
-        Spawner,
         Machine,
         Delete
     }
@@ -17,10 +16,11 @@ public class MouseManager : MonoBehaviour
 
 
     [SerializeField] GameObject testobject;
-    [SerializeField] Recipe recipe;
     [SerializeField] bool spawnProcessor;
     [SerializeField] bool spawnTestobject;
     [SerializeField] BuildMode currentBuildMode = BuildMode.Conveyor;
+    [SerializeField] Recipe[] recipes;
+    int currentRecipe = 0;
     NodeManager nodeManager;
     ConveyorManager conveyorManager;
     ResourceSpawnerManager resourceSpawnerManager;
@@ -68,11 +68,8 @@ public class MouseManager : MonoBehaviour
                     conveyorManager.Details(gridId);
                 }
                 break;
-            case BuildMode.Spawner:
-                resourceSpawnerManager.NewSpawner(testobject);
-                break;
             case BuildMode.Machine:
-                machineManager.NewMachine(gridId, recipe);
+                machineManager.NewMachine(gridId, recipes[currentRecipe]);
                 break;
             case BuildMode.Delete:
                 DeleteConveyor(gridId);
@@ -110,9 +107,11 @@ public class MouseManager : MonoBehaviour
         SetBuildMode(BuildMode.Conveyor);
     }
 
-    public void SetSpawnerMode()
+    public string SetRecipeMode()
     {
-        SetBuildMode(BuildMode.Spawner);
+        currentRecipe++;
+        currentRecipe = currentRecipe % recipes.Length;
+        return recipes[currentRecipe].description;
     }
 
     public void SetMachineMode()

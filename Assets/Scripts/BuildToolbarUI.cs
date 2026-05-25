@@ -7,7 +7,8 @@ public class BuildToolbarUI : MonoBehaviour
     [SerializeField] MouseManager mouseManager;
     [SerializeField] TMP_Text selectedModeText;
     [SerializeField] Image conveyorButtonImage;
-    [SerializeField] Image spawnerButtonImage;
+    [SerializeField] Image recipeButtonImage;
+    [SerializeField] TMP_Text recipeButtonText;
     [SerializeField] Image machineButtonImage;
     [SerializeField] Image deleteButtonImage;
     [SerializeField] Color normalColor = new Color32(47, 65, 88, 255);
@@ -39,14 +40,16 @@ public class BuildToolbarUI : MonoBehaviour
         SetMode("Conveyor", conveyorButtonImage);
     }
 
-    public void SetSpawnerMode()
+    public void SetRecipeMode()
     {
+        string description;
         if (mouseManager != null)
         {
-            mouseManager.SetSpawnerMode();
+            description = mouseManager.SetRecipeMode();
+            recipeButtonText.text = description;
         }
 
-        SetMode("Spawner", spawnerButtonImage);
+        SetMode("Spawner", recipeButtonImage);
     }
 
     public void SetMachineMode()
@@ -79,7 +82,7 @@ public class BuildToolbarUI : MonoBehaviour
         }
 
         ResetButton(conveyorButtonImage);
-        ResetButton(spawnerButtonImage);
+        ResetButton(recipeButtonImage);
         ResetButton(machineButtonImage);
         ResetButton(deleteButtonImage);
 

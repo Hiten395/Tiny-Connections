@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba89e904289cc46cfad649d27e277692, type: 3}
-  m_Name: Test Recipe
+  m_Name: LimeToGreen
   m_EditorClassIdentifier: Assembly-CSharp::Recipe
   input: 00000000
   data: {fileID: 11400000, guid: 5abb3d1b955e749c184a0280e312ed0b, type: 2}
