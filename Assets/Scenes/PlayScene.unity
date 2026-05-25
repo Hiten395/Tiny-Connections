@@ -1527,8 +1527,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceSpawnerManager
   spawner: {fileID: 7980544370160687977, guid: 3346947b57f2a467abcecbb4369c8cdd, type: 3}
+  testObject: {fileID: 7980544370160687977, guid: cfb9a9867b1fd497582d3897cc361aa8, type: 3}
   nodeLimitsData: {fileID: 11400000, guid: e891318f7579241388f2c632246f57b3, type: 2}
   ticksBetweenSpawns: 1
+  maxSpawns: 10
+  timeBetweenNewSpawner: 5
 --- !u!114 &339055328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1573,7 +1576,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoseManager
   startingQuantity: 10
   timeBetweenDepletion: 5
-  timeBetweenNewResourceAdded: 10
+  quantityOfDepletion: 0
+  timeBetweenIncreaseInDepletion: 20
+  timeBetweenNewResourceAdded: 20
   objectToIdForRecipies: {fileID: 11400000, guid: 5abb3d1b955e749c184a0280e312ed0b, type: 2}
   gameOverEvent:
     m_PersistentCalls:
@@ -3707,7 +3712,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Spawner
+  m_text: 'Change Recipe
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

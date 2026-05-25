@@ -10,6 +10,8 @@ public class Recipe : ScriptableObject
     [HideInInspector] public List<int> inputTracker = new List<int>();
     public int output;
 
+    public string description;
+
     public void ResetTracker()
     {
         inputTracker.Clear();

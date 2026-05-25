@@ -69,7 +69,7 @@ public class MouseManager : MonoBehaviour
                 }
                 break;
             case BuildMode.Spawner:
-                resourceSpawnerManager.NewSpawner(gridId, testobject);
+                resourceSpawnerManager.NewSpawner(testobject);
                 break;
             case BuildMode.Machine:
                 machineManager.NewMachine(gridId, recipe);

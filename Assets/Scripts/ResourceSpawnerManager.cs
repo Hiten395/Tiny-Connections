@@ -2,20 +2,21 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using System;
-using Mono.Cecil;
-using Unity.VisualScripting;
 
 public class ResourceSpawnerManager : MonoBehaviour
 {
     [SerializeField] GameObject spawner;
+    [SerializeField] GameObject testObject;
     [SerializeField] NodeLimitsData nodeLimitsData;
     [SerializeField] int ticksBetweenSpawns;
+    [SerializeField] int maxSpawns = 10;
+    [SerializeField] float timeBetweenNewSpawner;
     int ticks;
     List<Spanwer> spanwers = new List<Spanwer>();
     List<MovingObject> movingObjects = new List<MovingObject>();
     NodeManager nodeManager;
     float elapsed = 0;
-
+    int spawnCounter = 0;
     int spawnDirection = 0;
 
     class MovingObject
@@ -93,6 +94,8 @@ public class ResourceSpawnerManager : MonoBehaviour
     {
         ticks = ticksBetweenSpawns - 1;
         nodeManager = FindAnyObjectByType<NodeManager>();
+        NewSpawner(testObject);
+        StartCoroutine(NewSpawnerRoutine());
     }
 
     public void NewResource()
@@ -142,20 +145,33 @@ public class ResourceSpawnerManager : MonoBehaviour
             }
         }
     }
-
-    public void NewSpawner(Vector2 gridId, GameObject resource)
+    
+    IEnumerator NewSpawnerRoutine()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(timeBetweenNewSpawner);
+            NewSpawner(testObject);
+        }
+    }
+    public void NewSpawner(GameObject resource)
     {
         if (nodeManager == null || spawner == null || nodeLimitsData == null)
         {
             return;
         }
-
-        Vector2 outgoingDirection = OutGoingDirection(spawnDirection);
-
-        if (!nodeManager.CheckEmpty(gridId) || !nodeManager.IsWithinBounds(gridId + outgoingDirection))
+        if (spawnCounter >= maxSpawns)
         {
             return;
         }
+
+        Vector2 gridId;
+        Vector2 outgoingDirection;
+
+
+        spawnCounter++;
+        
+        RandomSpawn(out gridId, out outgoingDirection);
 
         GameObject self = Instantiate(spawner, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1.5f), Quaternion.Euler(0, 0, spawnDirection), transform);
         if (!nodeManager.UpdateNodeMachine(gridId, outgoingDirection, gridId, self))
@@ -165,6 +181,39 @@ public class ResourceSpawnerManager : MonoBehaviour
         }
 
         spanwers.Add(new Spanwer(gridId, gridId + outgoingDirection, resource, self));
+    }
+
+    void RandomSpawn(out Vector2 pos, out Vector2 dir)
+    {
+        System.Random rnd = new System.Random();
+        int upperWidth = (int)(nodeLimitsData.width / 2);
+        int upperHeight = (int)(nodeLimitsData.height / 2);
+        int left = (int)(nodeLimitsData.width / 8);
+        int right = (int)(nodeLimitsData.width * (3f/8f));
+        int up = (int)(nodeLimitsData.height * (3f/8f));
+        int down = (int)(nodeLimitsData.height / 2);
+
+        int leftcoor = rnd.Next(0, left + 1);
+        int rightcoor = rnd.Next(right, upperWidth);
+        int upcoor = rnd.Next(up, upperHeight);
+        int downcoor = rnd.Next(0, down + 1);
+
+        int[] temp1 = {leftcoor, rightcoor};
+        int[] temp2 = {upcoor, downcoor};
+        int[] temp3 = {0,90,180,270};
+
+        Vector2 randPos = new Vector2(temp1[rnd.Next(0,temp1.Length)], temp2[rnd.Next(0,temp2.Length)]);
+        Vector2 randDir = OutGoingDirection(temp3[rnd.Next(0,temp3.Length)]);
+
+        while (!(nodeManager.CheckEmpty(randPos) && nodeManager.CheckEmpty(randPos + randDir) && nodeManager.IsWithinBounds(randPos + randDir)))
+        {
+            randPos = new Vector2(temp1[rnd.Next(0,temp1.Length)], temp2[rnd.Next(0,temp2.Length)]);
+            randDir = OutGoingDirection(temp3[rnd.Next(0,temp3.Length)]);
+        }    
+        SpawnDirection(randDir);
+        pos = randPos;
+        dir = randDir;
+        return;
     }
 
     public void SpawnDirection(Vector2 dir)
