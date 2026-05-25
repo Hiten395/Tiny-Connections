@@ -1,5 +1,5 @@
 using System;
-using Unity.GraphToolkit.Editor;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +18,7 @@ public class MouseManager : MonoBehaviour
     [SerializeField] GameObject testobject;
     [SerializeField] bool spawnProcessor;
     [SerializeField] bool spawnTestobject;
+    [SerializeField] TMP_Text directiontext;
     [SerializeField] BuildMode currentBuildMode = BuildMode.Conveyor;
     [SerializeField] Recipe[] recipes;
     int currentRecipe = 0;
@@ -44,6 +45,23 @@ public class MouseManager : MonoBehaviour
     {
         if (!context.performed) return;
         Vector2 dir = context.ReadValue<Vector2>();
+
+        if (dir == new Vector2(1, 0))
+        {
+            directiontext.text = "Direction: Right";
+        }
+        if (dir == new Vector2(-1, 0))
+        {
+            directiontext.text = "Direction: Left";
+        }
+        if (dir == new Vector2(0, 1))
+        {
+            directiontext.text = "Direction: Up";
+        }
+        if (dir == new Vector2(0, -1))
+        {
+            directiontext.text = "Direction: Down";
+        }
         conveyorManager.SetOutGoingDirection(dir);
         resourceSpawnerManager.SpawnDirection(dir);
         machineManager.SetOutGoingDirection(dir);

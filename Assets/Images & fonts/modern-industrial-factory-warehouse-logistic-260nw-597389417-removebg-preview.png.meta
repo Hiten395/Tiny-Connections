@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1b439bc22edcc4136b26af48c051ddac
+guid: 95dca2286af9141a796c66292ee0b75d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8957324059118975939
-    second: images_0
+      213: -2701853001495008951
+    second: modern-industrial-factory-warehouse-logistic-260nw-597389417-removebg-preview_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: images_0
+      name: modern-industrial-factory-warehouse-logistic-260nw-597389417-removebg-preview_0
       rect:
         serializedVersion: 2
-        x: 110
-        y: 110
-        width: 101
-        height: 97
+        x: 19
+        y: 46
+        width: 293
+        height: 157
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 9, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3cbb8d916cece4c70800000000000000
-      internalID: 8957324059118975939
+      spriteID: 949219a9207118ad0800000000000000
+      internalID: -2701853001495008951
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 964ed244b11054756acc1993dd8ac8c6
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      images_0: 8957324059118975939
+      modern-industrial-factory-warehouse-logistic-260nw-597389417-removebg-preview_0: -2701853001495008951
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

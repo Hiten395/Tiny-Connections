@@ -16,4 +16,4 @@ MonoBehaviour:
   data: {fileID: 0}
   inputTracker: 
   output: 3
-  description: Lime+Orange = Purple
+  description: Lime+Orange -> Purple
