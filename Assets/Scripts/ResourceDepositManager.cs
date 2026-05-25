@@ -29,7 +29,7 @@ public class ResourceDepositManager : MonoBehaviour
             return;
         }
 
-        Instantiate(depositPrefab, new Vector3(0,0,0), Quaternion.identity, transform);
+        Instantiate(depositPrefab, new Vector3(0,0,-1), Quaternion.identity, transform);
         Vector2 bottomleft = new Vector2((nodeLimitsData.width / 4) - 1, (nodeLimitsData.height / 4) - 1);
         absorbNodes.Add(bottomleft);
         absorbNodes.Add(bottomleft + new Vector2(0,1));
@@ -62,7 +62,7 @@ public class ResourceDepositManager : MonoBehaviour
                 ID itemId = item.GetComponent<ID>();
                 if (loseManager != null && itemId != null)
                 {
-                    loseManager.AddResource(itemId.id);
+                    loseManager.AddResource(0, itemId.resourceValue);
                 }
                 Destroy(item);
             }

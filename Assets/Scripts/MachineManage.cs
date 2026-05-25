@@ -62,7 +62,6 @@ public class MachineManage : MonoBehaviour
         {
             foreach (var block in movingObjects)
             {
-                Debug.Log(block.dir);
                 block.thing.transform.Translate(block.dir * Time.deltaTime);
             }
         }
@@ -91,14 +90,22 @@ public class MachineManage : MonoBehaviour
     {
         if (nodeManager.CheckEmpty(gridId))
         {
-            // Debug.Log(gridId + " " + OutGoingDirection(spawnDirection));
-            // Debug.Log(gridId + OutGoingDirection(spawnDirection));
             GameObject instance = Instantiate(machine, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -10), Quaternion.Euler(0,0,spawnDirection), transform);
             Machine machine2 = new Machine(gridId, gridId + OutGoingDirection(spawnDirection), instance, recipe);
             machine2.recipe.ResetTracker();
             machines.Add(gridId, machine2);
             nodeManager.UpdateIsMachine(gridId, true);
 
+        }
+    }
+
+    public void DeleteMachine(Vector2 gridId)
+    {
+        if (nodeManager.CheckStatus(gridId)[1])
+        {
+            Destroy(machines[gridId].machine);
+            machines.Remove(gridId);
+            nodeManager.UpdateIsMachine(gridId, false);
         }
     }
     public void Process()
@@ -137,8 +144,6 @@ public class MachineManage : MonoBehaviour
         GameObject currentItem = Instantiate(recipe.GetOutPut(recipe.output), new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -2f), Quaternion.identity, transform);
         GameObject temp;
         Vector2 dir = outgoingDirection - gridId;
-        Debug.Log(dir);
-        Debug.Log(outgoingDirection + " " + gridId);
         if (!nodeManager.CheckObject(outgoingDirection, out temp))
         {
             if (nodeManager.CheckEmpty(outgoingDirection))

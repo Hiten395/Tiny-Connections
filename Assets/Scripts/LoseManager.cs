@@ -9,29 +9,20 @@ public class LoseManager : MonoBehaviour
     [SerializeField] int startingQuantity = 10;
     [SerializeField] float timeBetweenDepletion = 10;
     [SerializeField] int quantityOfDepletion;
+    [SerializeField] int quantityOfAddition;
     [SerializeField] float timeBetweenIncreaseInDepletion = 10f;
     [SerializeField] float timeBetweenNewResourceAdded = 30f;
+    [SerializeField] int maxQuantity;
     [SerializeField] ObjectToIdForRecipies objectToIdForRecipies;
     [SerializeField] UnityEvent gameOverEvent;
+    GameplayHUDUI gameplayHUDUI;
     Dictionary<int, int> resources = new Dictionary<int, int>();
 
 
     int currentResources = 1;
     bool gameOverTriggered;
 
-    public float SupplyPercent
-    {
-        get
-        {
-            if (resources.Count == 0 || startingQuantity <= 0)
-            {
-                return 1f;
-            }
-
-            int lowestResource = resources.Values.Min();
-            return Mathf.Clamp01((float)lowestResource / startingQuantity);
-        }
-    }
+    public List<float> supplyPercent = new List<float>();
 
     public int LowestResourceCount
     {
@@ -49,8 +40,10 @@ public class LoseManager : MonoBehaviour
     void Start()
     {
         resources.Add(0, startingQuantity);
+        supplyPercent.Add((float)startingQuantity / (float)maxQuantity);
+        gameplayHUDUI = FindAnyObjectByType<GameplayHUDUI>();
         StartCoroutine(Deplete());
-        StartCoroutine(NewResource());
+        //StartCoroutine(NewResource());
         StartCoroutine(IncreaseDepletion());
     }
 
@@ -65,10 +58,11 @@ public class LoseManager : MonoBehaviour
             foreach (var key in keys)
             {
                 resources[key] -= quantityOfDepletion;
+                supplyPercent[key] = (float)resources[key] / (float)maxQuantity;
+                //Debug.Log(supplyPercent[key]);
 
                 if (resources[key] < 1)
                 {
-                    Debug.Log("gameOver");
                     gameOverTriggered = true;
                     gameOverEvent.Invoke();
                     yield break;
@@ -81,28 +75,12 @@ public class LoseManager : MonoBehaviour
         while (!gameOverTriggered)
         {
             yield return new WaitForSeconds(timeBetweenIncreaseInDepletion);
+            Debug.Log(quantityOfDepletion + "resources depletion increased");
             quantityOfDepletion++;
         }
     }
-    IEnumerator NewResource()
+    public void AddResource(int id, int value)
     {
-        while (!gameOverTriggered)
-        {
-            yield return new WaitForSeconds(timeBetweenNewResourceAdded);
-            Debug.Log(currentResources);
-            Debug.Log(objectToIdForRecipies.data.Count);
-
-            if (objectToIdForRecipies != null && currentResources < objectToIdForRecipies.data.Count)
-            {
-                Debug.Log("new resource to add to account for");
-                resources.Add(currentResources, startingQuantity);
-                currentResources++;
-            }
-        }
-    }
-    public void AddResource(int id)
-    {
-        resources[id]++;
-        //Debug.Log("Resource Added");
+        resources[id] += value;
     }
 }

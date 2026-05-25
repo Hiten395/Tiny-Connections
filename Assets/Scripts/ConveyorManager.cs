@@ -19,12 +19,14 @@ public class ConveyorManager : MonoBehaviour
 
     class MovingObjects
     {
+        public Vector2 gridId;
         public Vector3 dir;
         public GameObject thing;
         public bool toDestroy;
 
-        public MovingObjects(Vector2 dir2, GameObject thing, bool toDestroy)
+        public MovingObjects(Vector2 gridId, Vector2 dir2, GameObject thing, bool toDestroy)
         {
+            this.gridId = gridId;
             dir = new Vector3(dir2.x, dir2.y, -2);
             this.thing = thing;
             this.toDestroy = toDestroy;
@@ -50,14 +52,21 @@ public class ConveyorManager : MonoBehaviour
         {
             foreach (var block in movingObjects)
             {
-                block.thing.transform.Translate(block.dir * Time.deltaTime);
+                try
+                {
+                    block.thing.transform.Translate(block.dir * Time.deltaTime);
+                }
+                catch
+                {
+                    movingObjects.Remove(block);
+                }
             }
         }
         else
         {
             foreach (var block in movingObjects)
             {
-                if (block.toDestroy)
+                if (block.toDestroy && nodeManager.CheckEmpty(block.gridId + new Vector2(block.dir.x, block.dir.y)))
                 {
                     Destroy(block.thing);
                 }
@@ -86,10 +95,14 @@ public class ConveyorManager : MonoBehaviour
         {
             conveyors.Remove(gridId);
         }
-
+        GameObject gameObject;
+        if (nodeManager.CheckObject(gridId, out gameObject))
+        {
+            Destroy(gameObject);
+        }
         nodeManager.ResetNode(gridId);
     }
-
+    //
     // builds a conveyor with a new line
     public void NewConveyor(Vector2 gridId)
     {
@@ -301,12 +314,13 @@ public class ConveyorManager : MonoBehaviour
                             Vector2 dir = connections[1][0] - gridId;
                             if (nodeManager.CheckEmpty(connections[1][0]))
                             {
-                                movingObjects.Add(new MovingObjects(dir, currentObject, true));
+                                Debug.Log("test");
+                                movingObjects.Add(new MovingObjects(gridId, dir, currentObject, true));
                                 nodeManager.Removeitem(gridId);
                             }
                             else
                             {
-                                movingObjects.Add(new MovingObjects(dir, currentObject, false));
+                                movingObjects.Add(new MovingObjects(gridId, dir, currentObject, false));
                                 nodeManager.UpdateNodePostion(gridId, dir);
                             }
                         }

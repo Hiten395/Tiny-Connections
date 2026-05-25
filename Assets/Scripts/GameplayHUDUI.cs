@@ -13,7 +13,8 @@ public class GameplayHUDUI : MonoBehaviour
     [SerializeField] Color criticalColor = new Color32(220, 72, 72, 255);
 
     RectTransform demandBarFillRect;
-
+    
+    int currentResource = 1;
     void Awake()
     {
         if (loseManager == null)
@@ -39,7 +40,7 @@ public class GameplayHUDUI : MonoBehaviour
             return;
         }
 
-        float supplyPercent = loseManager.SupplyPercent;
+        float supplyPercent = loseManager.supplyPercent[0];
         UpdateText(supplyPercent);
         UpdateBar(supplyPercent);
     }
@@ -56,11 +57,15 @@ public class GameplayHUDUI : MonoBehaviour
             status = "Low";
         }
 
-        citySupplyText.text = $"City Supply: {status}";
+        citySupplyText.text = $"Home Supply: {status}";
     }
 
     void UpdateBar(float supplyPercent)
     {
+        if (supplyPercent > 1f)
+        {
+            supplyPercent = 1f;
+        }
         demandBarFillRect.anchorMin = new Vector2(0f, 0f);
         demandBarFillRect.anchorMax = new Vector2(supplyPercent, 1f);
         demandBarFillRect.offsetMin = new Vector2(3f, 3f);
@@ -78,6 +83,11 @@ public class GameplayHUDUI : MonoBehaviour
         {
             demandBarFill.color = stableColor;
         }
+    }
+
+    public void NewResource()
+    {
+        currentResource++;
     }
 
     public void ShowGameOver()

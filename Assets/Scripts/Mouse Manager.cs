@@ -73,6 +73,7 @@ public class MouseManager : MonoBehaviour
                 break;
             case BuildMode.Delete:
                 DeleteConveyor(gridId);
+                machineManager.DeleteMachine(gridId);
                 break;
         }
     }

@@ -173,6 +173,11 @@ public class ResourceSpawnerManager : MonoBehaviour
         
         RandomSpawn(out gridId, out outgoingDirection);
 
+        if (gridId.x == -1)
+        {
+            return;
+        }
+
         GameObject self = Instantiate(spawner, new Vector3(gridId.x + 0.5f - nodeLimitsData.width / 4, gridId.y + 0.5f - nodeLimitsData.height / 4, -1.5f), Quaternion.Euler(0, 0, spawnDirection), transform);
         if (!nodeManager.UpdateNodeMachine(gridId, outgoingDirection, gridId, self))
         {
@@ -204,11 +209,17 @@ public class ResourceSpawnerManager : MonoBehaviour
 
         Vector2 randPos = new Vector2(temp1[rnd.Next(0,temp1.Length)], temp2[rnd.Next(0,temp2.Length)]);
         Vector2 randDir = OutGoingDirection(temp3[rnd.Next(0,temp3.Length)]);
-
-        while (!(nodeManager.CheckEmpty(randPos) && nodeManager.CheckEmpty(randPos + randDir) && nodeManager.IsWithinBounds(randPos + randDir)))
+        int i = 0;
+        while(!(nodeManager.CheckEmpty(randPos) && nodeManager.CheckEmpty(randPos + randDir) && nodeManager.IsWithinBounds(randPos + randDir)))
         {
             randPos = new Vector2(temp1[rnd.Next(0,temp1.Length)], temp2[rnd.Next(0,temp2.Length)]);
             randDir = OutGoingDirection(temp3[rnd.Next(0,temp3.Length)]);
+            i++;
+            if (i > 10)
+            {
+                randPos = new Vector2(-1,-1);
+                break;
+            }
         }    
         SpawnDirection(randDir);
         pos = randPos;
